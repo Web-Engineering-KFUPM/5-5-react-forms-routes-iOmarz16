@@ -1,0 +1,40 @@
+name: Study Buddy Lab Autograder
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 5-5-react-route-form
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Grader Script
+        run: |
+          echo "Running autograder..."
+          node script/grade.cjs | tee grading_log.txt
+
+      - name: Upload Grading Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: grading-report
+          path: |
+            5-5-react-route-form/grading_report.txt
+            5-5-react-route-form/grading_report.json
+            5-5-react-route-form/grading_log.txt
